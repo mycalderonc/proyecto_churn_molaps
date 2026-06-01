@@ -9,6 +9,7 @@
 | Recall | 1.0000 |
 | F1-score | 1.0000 |
 | ROC AUC | 1.0000 |
+|Specificity | 1.0000 |
 
 ## Interpretación inicial
 
@@ -19,3 +20,4 @@ Estas métricas permiten evaluar el desempeño inicial del modelo de clasificaci
 - Recall indica qué proporción de clientes con churn fueron identificados.
 - F1-score resume precision y recall en una sola métrica.
 - Mide la capacidad del modelo para distinguir entre clientes que abandonan y los que no abandonan.
+- Indica qué proporción de clientes que no abandonan fueron correctamente identificados.
