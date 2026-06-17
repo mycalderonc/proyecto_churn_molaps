@@ -1,56 +1,207 @@
 # Proyecto Churn MLOps
 
-Este proyecto corresponde a una práctica inicial del módulo de MLOps.
+## Descripción
 
-El objetivo es construir una estructura básica de trabajo para un proyecto de Machine Learning que permita:
+Este proyecto implementa una solución de Machine Learning Operations (ML-Ops) para la predicción de abandono de clientes (Churn Prediction).
 
-- Preparar datos.
-- Entrenar un modelo.
-- Evaluar métricas.
-- Guardar el modelo entrenado.
-- Exponer el modelo mediante una API.
-- Ejecutar pruebas básicas.
+La solución incluye el entrenamiento de un modelo de Machine Learning, su despliegue mediante una API desarrollada con FastAPI, ejecución dentro de contenedores Docker y una capa básica de observabilidad para monitoreo operativo.
 
-## Problema del proyecto
+## Objetivo
 
-Se trabajará con un caso simplificado de predicción de abandono de clientes, conocido como churn.
+Desarrollar una API predictiva capaz de identificar clientes con riesgo de abandono, incorporando prácticas fundamentales de ML-Ops como:
 
-El modelo intentará predecir si un cliente podría abandonar un servicio, utilizando variables como edad, antigüedad, saldo promedio, reclamos y uso de aplicación móvil.
+* Despliegue de modelos.
+* Validación de datos.
+* Monitoreo operativo.
+* Registro de eventos (logging).
+* Detección de anomalías.
+* Gestión básica de métricas.
+* Contenerización mediante Docker.
+
+---
+
+## Problema de negocio
+
+La pérdida de clientes representa un desafío para las organizaciones debido al impacto económico asociado a la reducción de ingresos y fidelización.
+
+Este proyecto busca identificar clientes con probabilidad de abandono utilizando variables relacionadas con el comportamiento del cliente.
+
+---
+
+## Arquitectura de la solución
+
+```text
+Cliente
+   │
+   ▼
+FastAPI
+   │
+   ├── Validación de datos
+   ├── Detección de anomalías
+   ├── Monitoreo de métricas
+   ├── Logging
+   │
+   ▼
+Modelo Machine Learning (.joblib)
+   │
+   ▼
+Predicción de Churn
+```
+
+---
 
 ## Estructura del proyecto
 
 ```text
 proyecto_churn_mlops
+├── api
+│   └── main.py
 ├── data
+├── docs
+├── logs
+├── models
 ├── notebooks
 ├── src
-├── models
-├── api
 ├── tests
-├── docs
-├── README.md
-└── requirements.txt
+├── Dockerfile
+├── requirements.txt
+├── .dockerignore
+└── README.md
 ```
 
-## Carpetas principales
+---
 
-- `data`: contiene los datos del proyecto.
-- `notebooks`: contiene análisis exploratorios.
-- `src`: contiene los scripts principales del modelo.
-- `models`: contiene el modelo entrenado.
-- `api`: contiene la API del modelo.
-- `tests`: contiene pruebas automáticas.
-- `docs`: contiene documentación y métricas.
+## Funcionalidades implementadas
 
-## Flujo inicial del proyecto
+### Predicción de churn
 
-El flujo básico será:
+La API recibe información del cliente y devuelve:
 
-1. Preparar los datos.
-2. Entrenar el modelo.
-3. Evaluar el modelo.
-4. Guardar las métricas.
-5. Crear una API básica.
-6. Probar el funcionamiento inicial.
+* Probabilidad de abandono.
+* Clasificación de riesgo.
+* Alertas por valores fuera del rango histórico.
+* Información del modelo utilizado.
 
-## Control de versiones
+### Monitoreo básico
+
+Se implementaron mecanismos de observabilidad:
+
+* Registro de eventos en consola y archivo.
+* Medición de latencia.
+* Conteo de solicitudes.
+* Conteo de errores de validación.
+* Conteo de errores internos.
+* Métricas acumuladas.
+* Detección de posibles señales de drift.
+
+### Logging
+
+Los eventos son almacenados en:
+
+```text
+logs/monitor_api.log
+```
+
+---
+
+## Endpoints disponibles
+
+| Endpoint | Método | Descripción                   |
+| -------- | ------ | ----------------------------- |
+| /        | GET    | Información general de la API |
+| /health  | GET    | Estado de salud del servicio  |
+| /metrics | GET    | Métricas acumuladas           |
+| /predict | POST   | Predicción de churn           |
+| /docs    | GET    | Documentación Swagger         |
+
+---
+
+## Ejecución local
+
+Instalar dependencias:
+
+```bash
+pip install -r requirements.txt
+```
+
+Ejecutar la API:
+
+```bash
+uvicorn api.main:app --reload
+```
+
+Acceder a Swagger:
+
+```text
+http://localhost:8000/docs
+```
+
+---
+
+## Ejecución con Docker
+
+Construcción de la imagen:
+
+```bash
+docker build -t churn-api .
+```
+
+Ejecución del contenedor:
+
+```bash
+docker run -p 8000:8000 churn-api
+```
+
+Verificar funcionamiento:
+
+```text
+http://localhost:8000/health
+```
+
+---
+
+## Monitoreo y observabilidad
+
+Las métricas disponibles permiten realizar seguimiento de:
+
+* Solicitudes procesadas.
+* Errores HTTP.
+* Latencia promedio.
+* Latencia máxima.
+* Predicciones válidas.
+* Solicitudes con anomalías.
+* Distribución de respuestas.
+
+Estas métricas pueden consultarse mediante:
+
+```text
+GET /metrics
+```
+
+---
+
+## Riesgo de Drift
+
+La solución incorpora una verificación de valores fuera de los rangos históricos utilizados durante el entrenamiento.
+
+Cuando una observación presenta características atípicas, la API genera alertas que permiten identificar posibles señales tempranas de Data Drift.
+
+---
+
+## Tecnologías utilizadas
+
+* Python
+* FastAPI
+* Scikit-Learn
+* Joblib
+* Docker
+* Uvicorn
+* Pydantic
+
+---
+
+## Autor
+
+Maria Yamile Calderón Cárdenas
+
+Maestría en Ciencia de Datos e Inteligencia Artificial
